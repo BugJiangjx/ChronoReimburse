@@ -1,0 +1,1034 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ChronoReimburse | 出差天数计算终端</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+  <style>
+    :root {
+      --bg-0: #05070f;
+      --bg-1: #0a1022;
+      --bg-2: #111a35;
+      --card: rgba(10, 16, 34, 0.66);
+      --card-border: rgba(106, 236, 255, 0.2);
+      --text: #d8ecff;
+      --muted: #82a6c9;
+      --cyber: #50f7ff;
+      --neon: #00e9ff;
+      --travel: #00f59c;
+      --stay: #8dff5c;
+      --home: #ff6b9f;
+      --warn: #ffc857;
+      --shadow: 0 0 0 1px rgba(132, 245, 255, 0.08), 0 20px 60px rgba(0, 0, 0, 0.45), 0 0 35px rgba(0, 212, 255, 0.18);
+      --radius: 16px;
+      --radius-sm: 10px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-height: 100%;
+      font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 10%, rgba(0, 238, 255, 0.16), transparent 35%),
+        radial-gradient(circle at 85% 15%, rgba(47, 116, 255, 0.26), transparent 40%),
+        radial-gradient(circle at 80% 85%, rgba(255, 74, 164, 0.18), transparent 30%),
+        linear-gradient(150deg, var(--bg-0), var(--bg-1) 45%, var(--bg-2));
+      background-attachment: fixed;
+    }
+
+    .grid-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.18;
+      background-image:
+        linear-gradient(rgba(80, 247, 255, 0.12) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(80, 247, 255, 0.12) 1px, transparent 1px);
+      background-size: 30px 30px;
+      mask-image: radial-gradient(circle at center, black 45%, transparent 100%);
+      z-index: 0;
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      width: min(1120px, calc(100% - 28px));
+      margin: 24px auto;
+      display: grid;
+      gap: 16px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 16px 18px;
+      border-radius: var(--radius);
+      background: linear-gradient(140deg, rgba(6, 14, 34, 0.75), rgba(11, 20, 44, 0.52));
+      border: 1px solid var(--card-border);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .core {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      position: relative;
+      background: radial-gradient(circle at center, #a5fdff 4%, #54f5ff 25%, rgba(84, 245, 255, 0.05) 72%);
+      box-shadow: 0 0 28px rgba(73, 251, 255, 0.75);
+      animation: pulse 2.8s infinite ease-in-out;
+    }
+
+    .core::after {
+      content: "";
+      position: absolute;
+      inset: -6px;
+      border: 1px solid rgba(80, 247, 255, 0.45);
+      border-radius: 50%;
+      animation: spin 7s linear infinite;
+    }
+
+    .title {
+      line-height: 1.2;
+    }
+
+    .title h1 {
+      margin: 0;
+      font-size: clamp(19px, 2.8vw, 28px);
+      letter-spacing: 0.03em;
+      font-weight: 700;
+    }
+
+    .title p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .clock {
+      font-size: 13px;
+      color: var(--cyber);
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 6px 10px;
+      border: 1px solid rgba(80, 247, 255, 0.32);
+      border-radius: 999px;
+      background: rgba(8, 25, 47, 0.42);
+    }
+
+    .layout {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: minmax(290px, 360px) 1fr;
+    }
+
+    .panel {
+      border-radius: var(--radius);
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      padding: 16px;
+    }
+
+    .panel h2,
+    .panel h3 {
+      margin: 0 0 10px;
+      letter-spacing: 0.03em;
+    }
+
+    .panel h2 {
+      font-size: 17px;
+    }
+
+    .panel h3 {
+      font-size: 14px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .field {
+      margin-bottom: 14px;
+    }
+
+    .field label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+
+    .hint {
+      font-size: 11px;
+      color: rgba(151, 189, 223, 0.8);
+    }
+
+    .date-input {
+      width: 100%;
+      border: 1px solid rgba(101, 219, 255, 0.35);
+      background: rgba(6, 17, 40, 0.86);
+      color: var(--text);
+      border-radius: var(--radius-sm);
+      padding: 10px;
+      font-size: 14px;
+      outline: none;
+      transition: 0.2s border-color, 0.2s box-shadow;
+      caret-color: transparent;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    .date-input {
+      cursor: pointer;
+    }
+
+    .date-input:focus {
+      border-color: var(--cyber);
+      box-shadow: 0 0 0 3px rgba(80, 247, 255, 0.15);
+    }
+
+    .flatpickr-calendar {
+      background: rgba(7, 15, 34, 0.96);
+      border: 1px solid rgba(88, 216, 255, 0.45);
+      box-shadow: 0 18px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(80, 247, 255, 0.24);
+    }
+
+    .flatpickr-calendar .flatpickr-months .flatpickr-month,
+    .flatpickr-calendar .flatpickr-weekdays,
+    .flatpickr-calendar .flatpickr-current-month input.cur-year {
+      color: #d8ecff;
+      fill: #d8ecff;
+    }
+
+    .flatpickr-calendar .flatpickr-weekday {
+      color: #82a6c9;
+    }
+
+    .flatpickr-day {
+      color: #d8ecff;
+      border-radius: 8px;
+    }
+
+    .flatpickr-day.today {
+      border-color: rgba(80, 247, 255, 0.6);
+      color: #50f7ff;
+    }
+
+    .flatpickr-day.selected,
+    .flatpickr-day.startRange,
+    .flatpickr-day.endRange {
+      background: linear-gradient(130deg, rgba(0, 210, 255, 0.95), rgba(57, 119, 255, 0.9));
+      border-color: transparent;
+      color: #ffffff;
+    }
+
+    .flatpickr-day.inRange,
+    .flatpickr-day.prevMonthDay.inRange,
+    .flatpickr-day.nextMonthDay.inRange,
+    .flatpickr-day.today.inRange {
+      background: rgba(48, 160, 255, 0.22);
+      border-color: transparent;
+      color: #cfe6ff;
+      box-shadow: none;
+    }
+
+    .flatpickr-day.inRange:hover {
+      background: rgba(48, 160, 255, 0.35);
+    }
+
+    .flatpickr-day:hover {
+      background: rgba(80, 247, 255, 0.22);
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .date-stack {
+      display: grid;
+      gap: 4px;
+      margin-bottom: 2px;
+    }
+
+    .result-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+
+    .result-actions {
+      margin-top: 0;
+      gap: 12px;
+    }
+
+    .result-actions button {
+      min-width: 88px;
+    }
+
+    button {
+      appearance: none;
+      border: 1px solid transparent;
+      padding: 9px 13px;
+      border-radius: 10px;
+      font-size: 13px;
+      cursor: pointer;
+      color: #eaf8ff;
+      background: linear-gradient(130deg, rgba(0, 210, 255, 0.9), rgba(57, 119, 255, 0.84));
+      transition: transform 0.12s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(0, 204, 255, 0.28);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button.secondary {
+      background: rgba(9, 23, 45, 0.8);
+      border-color: rgba(132, 188, 235, 0.35);
+      color: #b8d8f7;
+      box-shadow: none;
+    }
+
+    button.danger {
+      background: linear-gradient(130deg, rgba(255, 81, 147, 0.9), rgba(255, 125, 113, 0.85));
+    }
+
+    .quick {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+      flex-wrap: wrap;
+    }
+
+    .quick button {
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      background: rgba(13, 33, 60, 0.84);
+      border-color: rgba(86, 204, 255, 0.32);
+      color: var(--muted);
+    }
+
+    .ranges {
+      margin-top: 8px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .range-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid rgba(255, 107, 159, 0.3);
+      border-radius: 10px;
+      background: rgba(36, 10, 27, 0.54);
+      padding: 8px 10px;
+      font-size: 13px;
+    }
+
+    .range-item span {
+      color: #ffc0d6;
+      font-weight: 600;
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(120px, 1fr));
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .kpi {
+      border-radius: 12px;
+      border: 1px solid rgba(112, 186, 233, 0.32);
+      background: rgba(7, 22, 43, 0.7);
+      padding: 10px;
+    }
+
+    .kpi b {
+      display: block;
+      font-size: 22px;
+      margin: 3px 0;
+    }
+
+    .kpi small {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .kpi.travel b { color: var(--travel); }
+    .kpi.stay b { color: var(--stay); }
+    .kpi.home b { color: var(--home); }
+    .kpi.total b { color: var(--cyber); }
+
+    .legend {
+      display: flex;
+      gap: 12px;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
+    .dot {
+      display: inline-flex;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 6px;
+      transform: translateY(1px);
+    }
+
+    .dot.travel { background: var(--travel); }
+    .dot.home { background: var(--home); }
+    .dot.boundary { background: var(--warn); }
+
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+      gap: 6px;
+      max-height: 420px;
+      overflow: auto;
+      padding-right: 2px;
+    }
+
+    .day {
+      min-height: 52px;
+      border-radius: 10px;
+      border: 1px solid rgba(114, 170, 210, 0.26);
+      background: rgba(5, 17, 34, 0.85);
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      color: #cce6ff;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .day::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .day:hover::before {
+      opacity: 1;
+      background: linear-gradient(160deg, rgba(157, 231, 255, 0.2), transparent 55%);
+    }
+
+    .day.travel {
+      border-color: rgba(0, 245, 156, 0.45);
+      box-shadow: inset 0 0 12px rgba(0, 245, 156, 0.2);
+    }
+
+    .day.home {
+      border-color: rgba(255, 107, 159, 0.5);
+      box-shadow: inset 0 0 12px rgba(255, 107, 159, 0.22);
+    }
+
+    .day.boundary {
+      border-color: rgba(255, 200, 87, 0.62);
+      box-shadow: inset 0 0 12px rgba(255, 200, 87, 0.22);
+    }
+
+    .day time {
+      font-size: 10px;
+      color: rgba(187, 216, 242, 0.86);
+      margin-top: 2px;
+    }
+
+    .line {
+      margin-top: 10px;
+      height: 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(106, 180, 220, 0.4);
+      overflow: hidden;
+      background: rgba(5, 17, 34, 0.85);
+      display: flex;
+    }
+
+    .line .travel,
+    .line .home,
+    .line .boundary {
+      height: 100%;
+      transition: width 0.3s ease;
+    }
+
+    .line .travel { background: linear-gradient(90deg, rgba(0,245,156,0.9), rgba(88,255,201,0.85)); }
+    .line .home { background: linear-gradient(90deg, rgba(255,107,159,0.88), rgba(255,148,177,0.9)); }
+    .line .boundary { background: linear-gradient(90deg, rgba(255,200,87,0.9), rgba(255,228,151,0.88)); }
+
+    .status {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      min-height: 20px;
+    }
+
+    .footer-note {
+      margin-top: 8px;
+      font-size: 11px;
+      color: rgba(151, 189, 223, 0.84);
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.08); }
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 930px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .quick {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .quick button {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        width: calc(100% - 16px);
+        margin: 10px auto 16px;
+      }
+
+      .topbar,
+      .panel {
+        padding: 12px;
+      }
+
+      .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .brand {
+        width: 100%;
+      }
+
+      .clock {
+        width: 100%;
+        text-align: center;
+      }
+
+      .kpi-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .row {
+        grid-template-columns: 1fr;
+      }
+
+      .calendar {
+        grid-template-columns: repeat(auto-fill, minmax(54px, 1fr));
+      }
+
+      .day {
+        min-height: 60px;
+      }
+
+      .result-actions {
+        width: 100%;
+      }
+
+      .actions {
+        gap: 8px;
+      }
+
+      .actions button {
+        flex: 1 1 calc(50% - 8px);
+        min-height: 40px;
+      }
+
+      .flatpickr-calendar {
+        width: min(96vw, 360px);
+        left: 2vw !important;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .quick {
+        grid-template-columns: 1fr;
+      }
+
+      .actions button {
+        flex-basis: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="grid-overlay"></div>
+
+  <main class="page">
+    <header class="topbar">
+      <div class="brand">
+        <div class="core"></div>
+        <div class="title">
+          <h1>出差报销天数计算终端</h1>
+          <p></p>
+        </div>
+      </div>
+      <div class="clock" id="clock">SYS TIME --:--:--</div>
+    </header>
+
+    <section class="layout">
+      <aside class="panel">
+        <h2>任务输入</h2>
+
+        <div class="date-stack">
+          <div class="field">
+            <label for="startDate">出差开始日期</label>
+            <input type="text" id="startDate" class="date-input" readonly placeholder="点击选择日期" />
+          </div>
+
+          <div class="field">
+            <label for="endDate">出差结束日期</label>
+            <input type="text" id="endDate" class="date-input" readonly placeholder="点击选择日期" />
+          </div>
+        </div>
+
+        <div class="quick">
+          <button class="secondary" id="presetPrevMonth">上一月</button>
+          <button class="secondary" id="presetPrev2Month">上两月累计</button>
+        </div>
+
+        <h3 style="margin-top: 16px;">回家区间（中间日期不计报销）</h3>
+        <div class="field">
+          <label for="homeRange">回家区间</label>
+          <input type="text" id="homeRange" class="date-input" readonly placeholder="一次选择开始和结束日期" />
+        </div>
+
+        <div class="actions">
+          <button id="addRange">添加区间</button>
+          <button class="danger" id="clearRanges">清空区间</button>
+        </div>
+
+        <div class="ranges" id="homeRanges"></div>
+        <p class="footer-note">规则：回家开始日与结束日计入出差天数，只有中间完整在家日期不计；住宿天数按“统计截止日也计住宿，回家当天不住宿，其余在外日住宿”统计。</p>
+      </aside>
+
+      <section class="panel">
+        <div class="result-head">
+          <h2>计算结果</h2>
+          <div class="actions result-actions">
+            <button id="runCalc">立即计算</button>
+            <button class="secondary" id="resetAll">重置</button>
+          </div>
+        </div>
+
+        <div class="kpi-grid">
+          <article class="kpi total">
+            <small>总区间天数</small>
+            <b id="kpiTotal">0</b>
+          </article>
+          <article class="kpi stay">
+            <small>住宿天数</small>
+            <b id="kpiStay">0</b>
+          </article>
+          <article class="kpi home">
+            <small>在家中间天数</small>
+            <b id="kpiHome">0</b>
+          </article>
+          <article class="kpi travel">
+            <small>可报销天数</small>
+            <b id="kpiTravel">0</b>
+          </article>
+        </div>
+
+        <div class="legend">
+          <span><i class="dot travel"></i>出差计入</span>
+          <span><i class="dot home"></i>在家中间（不计入）</span>
+          <span><i class="dot boundary"></i>回家边界日（计入）</span>
+        </div>
+
+        <div class="line" aria-label="统计线">
+          <div class="travel" id="lineTravel" style="width:0"></div>
+          <div class="home" id="lineHome" style="width:0"></div>
+          <div class="boundary" id="lineBoundary" style="width:0"></div>
+        </div>
+
+        <p class="status" id="status">等待输入出差日期...</p>
+
+        <div class="calendar" id="calendar"></div>
+      </section>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/zh.js"></script>
+  <script>
+    const els = {
+      startDate: document.getElementById('startDate'),
+      endDate: document.getElementById('endDate'),
+      homeRange: document.getElementById('homeRange'),
+      homeRanges: document.getElementById('homeRanges'),
+      addRange: document.getElementById('addRange'),
+      clearRanges: document.getElementById('clearRanges'),
+      runCalc: document.getElementById('runCalc'),
+      resetAll: document.getElementById('resetAll'),
+      presetPrevMonth: document.getElementById('presetPrevMonth'),
+      presetPrev2Month: document.getElementById('presetPrev2Month'),
+      kpiTotal: document.getElementById('kpiTotal'),
+      kpiStay: document.getElementById('kpiStay'),
+      kpiHome: document.getElementById('kpiHome'),
+      kpiTravel: document.getElementById('kpiTravel'),
+      lineTravel: document.getElementById('lineTravel'),
+      lineHome: document.getElementById('lineHome'),
+      lineBoundary: document.getElementById('lineBoundary'),
+      status: document.getElementById('status'),
+      calendar: document.getElementById('calendar'),
+      clock: document.getElementById('clock')
+    };
+
+    const homeRanges = [];
+    const datePickers = {};
+
+    const parseDate = (dateStr) => {
+      if (!dateStr) return null;
+      return new Date(`${dateStr}T00:00:00`);
+    };
+
+    const fmtDate = (dateObj) => {
+      const y = dateObj.getFullYear();
+      const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+      const d = String(dateObj.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    };
+
+    const daysBetweenInclusive = (start, end) => {
+      return Math.floor((end - start) / 86400000) + 1;
+    };
+
+    function initDatePickers() {
+      if (typeof flatpickr !== 'function') {
+        showStatus('日期组件加载失败，已回退到系统日期选择器。', 'error');
+        [els.startDate, els.endDate].forEach((inputEl) => {
+          inputEl.type = 'date';
+          inputEl.readOnly = false;
+        });
+        els.homeRange.readOnly = false;
+        return;
+      }
+
+      const locale = (flatpickr.l10ns && flatpickr.l10ns.zh) ? flatpickr.l10ns.zh : 'zh';
+      const commonConfig = {
+        locale,
+        dateFormat: 'Y-m-d',
+        allowInput: false,
+        clickOpens: true,
+        disableMobile: window.matchMedia('(max-width: 640px)').matches ? false : true
+      };
+
+      datePickers.startDate = flatpickr(els.startDate, {
+        ...commonConfig,
+        onChange: calculate
+      });
+      datePickers.endDate = flatpickr(els.endDate, {
+        ...commonConfig,
+        onChange: calculate
+      });
+      datePickers.homeRange = flatpickr(els.homeRange, {
+        ...commonConfig,
+        mode: 'range',
+        conjunction: ' 至 '
+      });
+    }
+
+    function setDateValue(inputEl, value) {
+      const picker = datePickers[inputEl.id];
+      if (picker) {
+        picker.setDate(value || null, false, 'Y-m-d');
+      } else {
+        inputEl.value = value || '';
+      }
+    }
+
+    function updateClock() {
+      const now = new Date();
+      const t = now.toLocaleTimeString('zh-CN', { hour12: false });
+      const d = now.toLocaleDateString('zh-CN');
+      els.clock.textContent = `SYS TIME ${d} ${t}`;
+    }
+
+    function showStatus(text, type = 'normal') {
+      els.status.textContent = text;
+      if (type === 'error') {
+        els.status.style.color = '#ff9cbc';
+      } else if (type === 'ok') {
+        els.status.style.color = '#96ffd0';
+      } else {
+        els.status.style.color = 'var(--muted)';
+      }
+    }
+
+    function renderHomeRanges() {
+      els.homeRanges.innerHTML = '';
+      if (!homeRanges.length) {
+        const empty = document.createElement('div');
+        empty.className = 'footer-note';
+        empty.textContent = '当前没有回家区间。';
+        els.homeRanges.appendChild(empty);
+        return;
+      }
+
+      homeRanges.forEach((r, i) => {
+        const item = document.createElement('div');
+        item.className = 'range-item';
+
+        const span = document.createElement('span');
+        span.textContent = `${r.start} - ${r.end}`;
+
+        const btn = document.createElement('button');
+        btn.className = 'secondary';
+        btn.textContent = '删除';
+        btn.addEventListener('click', () => {
+          homeRanges.splice(i, 1);
+          renderHomeRanges();
+          calculate();
+        });
+
+        item.appendChild(span);
+        item.appendChild(btn);
+        els.homeRanges.appendChild(item);
+      });
+    }
+
+    function addHomeRange() {
+      let start = '';
+      let end = '';
+      const selected = datePickers.homeRange?.selectedDates || [];
+      if (selected.length >= 2) {
+        start = fmtDate(selected[0]);
+        end = fmtDate(selected[1]);
+      } else if (els.homeRange.value) {
+        const tokens = els.homeRange.value.match(/\d{4}-\d{2}-\d{2}/g) || [];
+        start = tokens[0] || '';
+        end = tokens[1] || '';
+      }
+      if (!start || !end) {
+        showStatus('请先在回家区间中完成开始和结束日期选择。', 'error');
+        return;
+      }
+      if (start > end) {
+        showStatus('回家开始日期不能晚于结束日期。', 'error');
+        return;
+      }
+
+      homeRanges.push({ start, end });
+      homeRanges.sort((a, b) => a.start.localeCompare(b.start));
+      renderHomeRanges();
+      setDateValue(els.homeRange, '');
+      showStatus(`已添加回家区间 ${start} - ${end}`, 'ok');
+      calculate();
+    }
+
+    function inHomeMiddle(dateStr) {
+      return homeRanges.some(r => dateStr > r.start && dateStr < r.end);
+    }
+
+    function isBoundary(dateStr) {
+      return homeRanges.some(r => dateStr === r.start || dateStr === r.end);
+    }
+
+    function isHomeStart(dateStr) {
+      return homeRanges.some(r => dateStr === r.start);
+    }
+
+    function setLine(total, travel, homeMiddle, boundary) {
+      const safeTotal = Math.max(total, 1);
+      els.lineTravel.style.width = `${(travel / safeTotal) * 100}%`;
+      els.lineHome.style.width = `${(homeMiddle / safeTotal) * 100}%`;
+      els.lineBoundary.style.width = `${(boundary / safeTotal) * 100}%`;
+    }
+
+    function calculate() {
+      const s = els.startDate.value;
+      const e = els.endDate.value;
+
+      if (!s || !e) {
+        els.calendar.innerHTML = '';
+        els.kpiTotal.textContent = '0';
+        els.kpiStay.textContent = '0';
+        els.kpiHome.textContent = '0';
+        els.kpiTravel.textContent = '0';
+        setLine(0, 0, 0, 0);
+        showStatus('等待输入出差日期...');
+        return;
+      }
+
+      if (s > e) {
+        showStatus('出差开始日期不能晚于结束日期。', 'error');
+        return;
+      }
+
+      const start = parseDate(s);
+      const end = parseDate(e);
+      const total = daysBetweenInclusive(start, end);
+      let travel = 0;
+      let stay = 0;
+      let homeMiddle = 0;
+      let boundary = 0;
+
+      els.calendar.innerHTML = '';
+      const cur = new Date(start);
+
+      while (cur <= end) {
+        const ds = fmtDate(cur);
+        const cell = document.createElement('div');
+        cell.className = 'day';
+
+        const day = document.createElement('strong');
+        day.textContent = String(cur.getDate()).padStart(2, '0');
+
+        const time = document.createElement('time');
+        time.textContent = ds.slice(5);
+
+        if (inHomeMiddle(ds)) {
+          cell.classList.add('home');
+          homeMiddle += 1;
+        } else {
+          cell.classList.add('travel');
+          travel += 1;
+          if (isBoundary(ds)) {
+            cell.classList.remove('travel');
+            cell.classList.add('boundary');
+            boundary += 1;
+          }
+        }
+
+        if (!inHomeMiddle(ds) && !isHomeStart(ds)) {
+          stay += 1;
+        }
+
+        cell.title = ds;
+        cell.appendChild(day);
+        cell.appendChild(time);
+        els.calendar.appendChild(cell);
+
+        cur.setDate(cur.getDate() + 1);
+      }
+
+      els.kpiTotal.textContent = String(total);
+      els.kpiStay.textContent = String(stay);
+      els.kpiHome.textContent = String(homeMiddle);
+      els.kpiTravel.textContent = String(travel);
+      setLine(total, travel - boundary, homeMiddle, boundary);
+      showStatus(`可报销天数 ${travel} 天，住宿天数 ${stay} 天。`, 'ok');
+    }
+
+    function resetAll() {
+      setDateValue(els.startDate, '');
+      setDateValue(els.endDate, '');
+      setDateValue(els.homeRange, '');
+      homeRanges.splice(0, homeRanges.length);
+      renderHomeRanges();
+      calculate();
+      showStatus('已重置所有输入。');
+    }
+
+    function applyPreviousMonthsAccumulated(monthCount) {
+      const now = new Date();
+      const currentMonth = now.getMonth();
+      const currentYear = now.getFullYear();
+      const start = new Date(currentYear, currentMonth - monthCount, 1);
+      const end = new Date(currentYear, currentMonth, 0);
+      setDateValue(els.startDate, fmtDate(start));
+      setDateValue(els.endDate, fmtDate(end));
+      calculate();
+    }
+
+    function applyCurrentMonth() {
+      const now = new Date();
+      const first = new Date(now.getFullYear(), now.getMonth(), 1);
+      const last = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+      setDateValue(els.startDate, fmtDate(first));
+      setDateValue(els.endDate, fmtDate(last));
+      calculate();
+    }
+
+    [els.startDate, els.endDate].forEach(el => {
+      el.addEventListener('change', calculate);
+    });
+
+    els.addRange.addEventListener('click', addHomeRange);
+    els.clearRanges.addEventListener('click', () => {
+      homeRanges.splice(0, homeRanges.length);
+      renderHomeRanges();
+      calculate();
+      showStatus('已清空回家区间。');
+    });
+
+    els.runCalc.addEventListener('click', calculate);
+    els.resetAll.addEventListener('click', resetAll);
+    els.presetPrevMonth.addEventListener('click', () => applyPreviousMonthsAccumulated(1));
+    els.presetPrev2Month.addEventListener('click', () => applyPreviousMonthsAccumulated(2));
+
+    window.addEventListener('keydown', (e) => {
+      if (e.ctrlKey && e.key === 'Enter') {
+        calculate();
+      }
+      if (e.key === 'Escape') {
+        resetAll();
+      }
+    });
+
+    updateClock();
+    setInterval(updateClock, 1000);
+    initDatePickers();
+    renderHomeRanges();
+    applyCurrentMonth();
+  </script>
+</body>
+</html>
