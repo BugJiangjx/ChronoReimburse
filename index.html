@@ -646,12 +646,7 @@
 
         <h3 style="margin-top: 16px;">回家区间</h3>
         <div class="field">
-          <input type="text" id="homeRange" class="date-input" readonly placeholder="一次选择开始和结束日期" />
-        </div>
-
-        <div class="actions">
-          <button id="addRange">添加区间</button>
-          <button class="danger" id="clearRanges">清空区间</button>
+          <input type="text" id="homeRange" class="date-input" readonly placeholder="一次选择开始和结束日期（自动添加）" />
         </div>
 
         <div class="ranges" id="homeRanges"></div>
@@ -713,8 +708,6 @@
       endDate: document.getElementById('endDate'),
       homeRange: document.getElementById('homeRange'),
       homeRanges: document.getElementById('homeRanges'),
-      addRange: document.getElementById('addRange'),
-      clearRanges: document.getElementById('clearRanges'),
       runCalc: document.getElementById('runCalc'),
       resetAll: document.getElementById('resetAll'),
       presetPrevMonth: document.getElementById('presetPrevMonth'),
@@ -781,7 +774,12 @@
       datePickers.homeRange = flatpickr(els.homeRange, {
         ...commonConfig,
         mode: 'range',
-        conjunction: ' 至 '
+        conjunction: ' 至 ',
+        onChange: (_, __, instance) => {
+          if (instance.selectedDates.length === 2) {
+            addHomeRange();
+          }
+        }
       });
     }
 
@@ -999,14 +997,6 @@
 
     [els.startDate, els.endDate].forEach(el => {
       el.addEventListener('change', calculate);
-    });
-
-    els.addRange.addEventListener('click', addHomeRange);
-    els.clearRanges.addEventListener('click', () => {
-      homeRanges.splice(0, homeRanges.length);
-      renderHomeRanges();
-      calculate();
-      showStatus('已清空回家区间。');
     });
 
     els.runCalc.addEventListener('click', calculate);
