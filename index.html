@@ -192,9 +192,13 @@
       font-size: 14px;
       outline: none;
       transition: 0.2s border-color, 0.2s box-shadow;
-      caret-color: transparent;
+      caret-color: #d8ecff;
       -webkit-user-select: none;
       user-select: none;
+    }
+
+    .amount-config input[type="number"] {
+      caret-color: #d8ecff;
     }
 
     .date-input {
@@ -509,6 +513,314 @@
       color: rgba(151, 189, 223, 0.84);
     }
 
+    .alarm-card {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid rgba(80, 247, 255, 0.22);
+      background: rgba(6, 18, 36, 0.72);
+      display: grid;
+      gap: 8px;
+    }
+
+    .alarm-card h3 {
+      margin: 0;
+    }
+
+    .alarm-hint {
+      font-size: 11px;
+      color: rgba(138, 193, 232, 0.9);
+    }
+
+    .alarm-status {
+      min-height: 18px;
+      font-size: 12px;
+      color: rgba(151, 189, 223, 0.9);
+    }
+
+    .alarm-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .alarm-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(86, 204, 255, 0.2);
+      background: rgba(8, 22, 40, 0.7);
+      font-size: 12px;
+      color: rgba(203, 230, 255, 0.95);
+    }
+
+    .alarm-item span {
+      color: rgba(156, 210, 255, 0.95);
+      font-weight: 600;
+    }
+
+    .alarm-empty {
+      font-size: 11px;
+      color: rgba(151, 189, 223, 0.84);
+    }
+
+    .login-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 15, 0.82);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+      padding: 16px;
+      backdrop-filter: blur(6px);
+    }
+
+    .login-overlay.active {
+      display: flex;
+    }
+
+    .login-card {
+      width: min(420px, 100%);
+      border-radius: 16px;
+      border: 1px solid rgba(80, 247, 255, 0.3);
+      background: rgba(8, 18, 36, 0.9);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      display: grid;
+      gap: 10px;
+    }
+
+    .login-card h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .login-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .login-status {
+      min-height: 18px;
+      font-size: 12px;
+      color: rgba(151, 189, 223, 0.9);
+    }
+
+    body.locked main {
+      pointer-events: none;
+      user-select: none;
+      filter: blur(1px);
+    }
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 7, 18, 0.82);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 60;
+      padding: 16px;
+      backdrop-filter: blur(6px);
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-card {
+      width: min(1200px, 96vw);
+      border-radius: 16px;
+      border: 1px solid rgba(80, 247, 255, 0.3);
+      background: rgba(7, 16, 34, 0.92);
+      box-shadow: var(--shadow);
+      padding: 18px;
+      display: grid;
+      gap: 10px;
+      max-height: 90vh;
+      overflow: auto;
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-head h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .heatmap-wrap {
+      overflow-x: hidden;
+      overflow-y: auto;
+      padding-bottom: 4px;
+    }
+
+    .heatmap-shell {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 6px;
+      align-items: start;
+    }
+
+    .heatmap-months {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(0, 1fr);
+      gap: 4px;
+      margin-left: 28px;
+      margin-bottom: 6px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .heatmap-months span {
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    .heatmap-weekdays {
+      display: grid;
+      grid-template-rows: repeat(7, 1fr);
+      gap: 4px;
+      font-size: 11px;
+      color: var(--muted);
+      padding-top: 2px;
+    }
+
+    .heatmap-weekdays span {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+    }
+
+    .heatmap-grid {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(0, 1fr);
+      grid-template-rows: repeat(7, 1fr);
+      gap: 4px;
+      width: 100%;
+      min-width: 0;
+      height: 168px;
+    }
+
+    .heatmap-cell {
+      width: 100%;
+      height: 100%;
+      border-radius: 3px;
+      background: rgba(24, 38, 62, 0.9);
+      border: 1px solid rgba(86, 120, 160, 0.25);
+    }
+
+    .heatmap-cell.travel {
+      background: rgba(0, 245, 156, 0.7);
+      border-color: rgba(0, 245, 156, 0.55);
+    }
+
+    .heatmap-cell.home {
+      background: rgba(255, 107, 159, 0.65);
+      border-color: rgba(255, 107, 159, 0.55);
+    }
+
+    .heatmap-cell.boundary {
+      background: rgba(255, 200, 87, 0.7);
+      border-color: rgba(255, 200, 87, 0.6);
+    }
+
+    .heatmap-legend {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .heatmap-legend .box {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      border: 1px solid rgba(86, 120, 160, 0.3);
+      background: rgba(24, 38, 62, 0.9);
+      margin-right: 6px;
+      display: inline-block;
+    }
+
+    .amount-config {
+      display: none;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 10px;
+      padding: 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(80, 247, 255, 0.22);
+      background: rgba(6, 18, 36, 0.7);
+    }
+
+    .amount-config.active {
+      display: grid;
+    }
+
+    .amount-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+
+    .amount-hint {
+      font-size: 11px;
+      color: rgba(138, 193, 232, 0.9);
+    }
+
+    .records-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .record-item {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      padding: 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(86, 204, 255, 0.22);
+      background: rgba(6, 18, 36, 0.7);
+      font-size: 12px;
+      color: rgba(203, 230, 255, 0.95);
+    }
+
+    .record-item button.danger {
+      background: linear-gradient(130deg, rgba(255, 81, 147, 0.9), rgba(255, 125, 113, 0.85));
+      border-color: rgba(255, 125, 113, 0.5);
+      color: #fff2f7;
+    }
+
+    .record-meta {
+      display: grid;
+      gap: 4px;
+    }
+
+    .record-meta span {
+      color: rgba(156, 210, 255, 0.95);
+      font-weight: 600;
+    }
+
+    .record-empty {
+      font-size: 12px;
+      color: rgba(151, 189, 223, 0.84);
+    }
+
     @keyframes pulse {
       0%, 100% { transform: scale(1); }
       50% { transform: scale(1.08); }
@@ -610,6 +922,73 @@
 </head>
 <body>
   <div class="grid-overlay"></div>
+  <div class="login-overlay" id="loginOverlay">
+    <div class="login-card">
+      <h2>登录 / 注册</h2>
+      <p>请输入用户名和手机号，登录后可操作页面。</p>
+      <div class="field">
+        <label for="loginName">用户名</label>
+        <input type="text" id="loginName" class="date-input" placeholder="请输入用户名" />
+      </div>
+      <div class="field">
+        <label for="loginPhone">手机号</label>
+        <input type="tel" id="loginPhone" class="date-input" placeholder="请输入手机号" />
+      </div>
+      <div class="actions">
+        <button id="loginSubmit">登录 / 注册</button>
+      </div>
+      <div class="login-status" id="loginStatus">请填写手机号完成登录。</div>
+    </div>
+  </div>
+  <div class="modal-overlay" id="yearlyOverlay">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h2 id="yearlyTitle">年度统计</h2>
+        <div class="actions">
+          <button class="secondary" id="openAmountConfig">金额配置</button>
+          <button class="secondary" id="closeYearly">关闭</button>
+        </div>
+      </div>
+      <div class="amount-config" id="amountConfig">
+        <div class="field">
+          <label for="stayAllowance">住宿补助</label>
+          <input type="number" id="stayAllowance" class="date-input" min="0" step="1" />
+        </div>
+        <div class="field">
+          <label for="mealAllowance">饭补</label>
+          <input type="number" id="mealAllowance" class="date-input" min="0" step="1" />
+        </div>
+        <div class="amount-actions">
+          <span class="amount-hint">出差计入 = 住宿补助 + 饭补；边界 = 饭补</span>
+          <button id="saveAmountConfig">保存配置</button>
+        </div>
+      </div>
+      <div class="heatmap-legend">
+        <span><i class="box"></i>无记录</span>
+        <span><i class="box" style="background: rgba(0,245,156,0.7); border-color: rgba(0,245,156,0.55);"></i>出差计入</span>
+        <span><i class="box" style="background: rgba(255,107,159,0.65); border-color: rgba(255,107,159,0.55);"></i>在家中间</span>
+        <span><i class="box" style="background: rgba(255,200,87,0.7); border-color: rgba(255,200,87,0.6);"></i>回家边界</span>
+      </div>
+      <div class="heatmap-wrap">
+        <div class="heatmap-months" id="yearlyMonths"></div>
+        <div class="heatmap-shell">
+          <div class="heatmap-weekdays" id="yearlyWeekdays"></div>
+          <div class="heatmap-grid" id="yearlyGrid"></div>
+        </div>
+      </div>
+      <div class="alarm-status" id="yearlySummary"></div>
+    </div>
+  </div>
+  <div class="modal-overlay" id="recordsOverlay">
+    <div class="modal-card">
+      <div class="modal-head">
+        <h2>云端记录</h2>
+        <button class="secondary" id="closeRecords">关闭</button>
+      </div>
+      <div class="records-list" id="recordsList"></div>
+      <div class="alarm-status" id="recordsStatus"></div>
+    </div>
+  </div>
 
   <main class="page">
     <header class="topbar">
@@ -620,7 +999,10 @@
           <p></p>
         </div>
       </div>
-      <div class="clock" id="clock">SYS TIME --:--:--</div>
+      <div class="actions">
+        <button class="secondary" id="switchAccount">切换账号</button>
+        <div class="clock" id="clock">SYS TIME --:--:--</div>
+      </div>
     </header>
 
     <section class="layout">
@@ -651,14 +1033,33 @@
 
         <div class="ranges" id="homeRanges"></div>
         <p class="footer-note">规则：回家开始日与结束日计入出差天数，只有中间完整在家日期不计；住宿天数按“统计截止日也计住宿，回家当天不住宿，其余在外日住宿”统计。</p>
+
+        <div class="alarm-card">
+          <h3>闹钟邮件提醒</h3>
+          <div class="field">
+            <label for="alarmEmail">邮箱</label>
+            <input type="email" id="alarmEmail" class="date-input" placeholder="请输入邮箱" />
+          </div>
+          <div class="field">
+            <label for="alarmDate">提醒日期</label>
+            <input type="text" id="alarmDate" class="date-input" readonly placeholder="选择提醒日期" />
+          </div>
+          <div class="alarm-hint">提醒固定在早上 09:00 发送邮件。</div>
+          <div class="actions">
+            <button id="submitAlarm">提交提醒</button>
+          </div>
+          <div class="alarm-status" id="alarmStatus">等待填写手机号和日期。</div>
+          <div class="alarm-list" id="alarmList"></div>
+        </div>
       </aside>
 
       <section class="panel">
         <div class="result-head">
           <h2>计算结果</h2>
           <div class="actions result-actions">
-            <button id="runCalc">立即计算</button>
-            <button class="secondary" id="resetAll">重置</button>
+            <button id="saveCloud">保存到云</button>
+            <button class="danger" id="manageRecords">删除记录</button>
+            <button class="secondary" id="yearlyStats">年度统计</button>
           </div>
         </div>
 
@@ -702,7 +1103,14 @@
 
   <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
   <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/zh.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
+    const SUPABASE_URL = 'https://xbdzqfizqlwuvkzvorym.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_lUkU4ccof9JInpKOXtY2eg_OlMzXgsK';
+    const supabaseClient = (window.supabase && window.supabase.createClient)
+      ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+      : null;
+
     const els = {
       startDate: document.getElementById('startDate'),
       endDate: document.getElementById('endDate'),
@@ -710,6 +1118,9 @@
       homeRanges: document.getElementById('homeRanges'),
       runCalc: document.getElementById('runCalc'),
       resetAll: document.getElementById('resetAll'),
+      saveCloud: document.getElementById('saveCloud'),
+      manageRecords: document.getElementById('manageRecords'),
+      yearlyStats: document.getElementById('yearlyStats'),
       presetPrevMonth: document.getElementById('presetPrevMonth'),
       presetPrev2Month: document.getElementById('presetPrev2Month'),
       kpiTotal: document.getElementById('kpiTotal'),
@@ -721,11 +1132,39 @@
       lineBoundary: document.getElementById('lineBoundary'),
       status: document.getElementById('status'),
       calendar: document.getElementById('calendar'),
-      clock: document.getElementById('clock')
+      clock: document.getElementById('clock'),
+      alarmEmail: document.getElementById('alarmEmail'),
+      alarmDate: document.getElementById('alarmDate'),
+      submitAlarm: document.getElementById('submitAlarm'),
+      alarmStatus: document.getElementById('alarmStatus'),
+      alarmList: document.getElementById('alarmList'),
+      switchAccount: document.getElementById('switchAccount'),
+      loginOverlay: document.getElementById('loginOverlay'),
+      loginName: document.getElementById('loginName'),
+      loginPhone: document.getElementById('loginPhone'),
+      loginSubmit: document.getElementById('loginSubmit'),
+      loginStatus: document.getElementById('loginStatus'),
+      yearlyOverlay: document.getElementById('yearlyOverlay'),
+      closeYearly: document.getElementById('closeYearly'),
+      yearlyGrid: document.getElementById('yearlyGrid'),
+      yearlyMonths: document.getElementById('yearlyMonths'),
+      yearlyWeekdays: document.getElementById('yearlyWeekdays'),
+      yearlyTitle: document.getElementById('yearlyTitle'),
+      yearlySummary: document.getElementById('yearlySummary'),
+      recordsOverlay: document.getElementById('recordsOverlay'),
+      closeRecords: document.getElementById('closeRecords'),
+      recordsList: document.getElementById('recordsList'),
+      recordsStatus: document.getElementById('recordsStatus'),
+      openAmountConfig: document.getElementById('openAmountConfig'),
+      amountConfig: document.getElementById('amountConfig'),
+      stayAllowance: document.getElementById('stayAllowance'),
+      mealAllowance: document.getElementById('mealAllowance'),
+      saveAmountConfig: document.getElementById('saveAmountConfig')
     };
 
     const homeRanges = [];
     const datePickers = {};
+    let lastYearlySnapshot = null;
 
     const parseDate = (dateStr) => {
       if (!dateStr) return null;
@@ -751,6 +1190,8 @@
           inputEl.readOnly = false;
         });
         els.homeRange.readOnly = false;
+        els.alarmDate.type = 'date';
+        els.alarmDate.readOnly = false;
         return;
       }
 
@@ -781,6 +1222,15 @@
           }
         }
       });
+
+      datePickers.alarmDate = flatpickr(els.alarmDate, {
+        ...commonConfig,
+        onChange: () => {
+          if (els.alarmDate.value) {
+            setAlarmStatus(`已选择提醒日期 ${els.alarmDate.value}，提醒时间固定 09:00。`);
+          }
+        }
+      });
     }
 
     function setDateValue(inputEl, value) {
@@ -797,6 +1247,235 @@
       const t = now.toLocaleTimeString('zh-CN', { hour12: false });
       const d = now.toLocaleDateString('zh-CN');
       els.clock.textContent = `SYS TIME ${d} ${t}`;
+    }
+
+    function setAlarmStatus(text, type = 'normal') {
+      els.alarmStatus.textContent = text;
+      if (type === 'error') {
+        els.alarmStatus.style.color = '#ff9cbc';
+      } else if (type === 'ok') {
+        els.alarmStatus.style.color = '#96ffd0';
+      } else {
+        els.alarmStatus.style.color = 'rgba(151, 189, 223, 0.9)';
+      }
+    }
+
+    function setLoginStatus(text, type = 'normal') {
+      els.loginStatus.textContent = text;
+      if (type === 'error') {
+        els.loginStatus.style.color = '#ff9cbc';
+      } else if (type === 'ok') {
+        els.loginStatus.style.color = '#96ffd0';
+      } else {
+        els.loginStatus.style.color = 'rgba(151, 189, 223, 0.9)';
+      }
+    }
+
+    function normalizePhone(raw) {
+      if (!raw) return '';
+      return raw.replace(/\s+/g, '').replace(/-/g, '');
+    }
+
+    function normalizeEmail(raw) {
+      return (raw || '').trim().toLowerCase();
+    }
+
+    function isValidEmail(raw) {
+      const email = normalizeEmail(raw);
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    function buildScheduleAt(dateStr) {
+      return `${dateStr}T09:00:00`;
+    }
+
+    function setLocked(locked) {
+      document.body.classList.toggle('locked', locked);
+      els.loginOverlay.classList.toggle('active', locked);
+    }
+
+    function loadStoredUser() {
+      try {
+        const raw = localStorage.getItem('alarm_user');
+        if (!raw) return null;
+        return JSON.parse(raw);
+      } catch {
+        return null;
+      }
+    }
+
+    function storeUser(user) {
+      localStorage.setItem('alarm_user', JSON.stringify(user));
+    }
+
+    function clearStoredUser() {
+      localStorage.removeItem('alarm_user');
+    }
+
+    function renderAlarmList(items) {
+      els.alarmList.innerHTML = '';
+      if (!items || !items.length) {
+        const empty = document.createElement('div');
+        empty.className = 'alarm-empty';
+        empty.textContent = '当前没有待提醒任务。';
+        els.alarmList.appendChild(empty);
+        return;
+      }
+      items.forEach((item) => {
+        const row = document.createElement('div');
+        row.className = 'alarm-item';
+        const left = document.createElement('div');
+        left.textContent = `${item.remind_date} 09:00 · ${item.email || ''}`;
+        const right = document.createElement('span');
+        right.textContent = item.status || 'pending';
+        row.appendChild(left);
+        row.appendChild(right);
+        els.alarmList.appendChild(row);
+      });
+    }
+
+    async function loadAlarmTasks() {
+      if (!supabaseClient || !currentUser) return;
+      const { data, error } = await supabaseClient
+        .from('alarm_requests')
+        .select('id, remind_date, scheduled_at, status, email')
+        .eq('phone', currentUser.phone)
+        .neq('status', 'sent')
+        .order('scheduled_at', { ascending: true });
+      if (error) {
+        console.error('loadAlarmTasks error:', error);
+        renderAlarmList([]);
+        return;
+      }
+      renderAlarmList(data || []);
+    }
+
+    async function loginOrRegister() {
+      const name = (els.loginName.value || '').trim();
+      const phone = normalizePhone(els.loginPhone.value);
+
+      if (!phone) {
+        setLoginStatus('请填写手机号。', 'error');
+        return;
+      }
+      if (!isValidPhone(phone)) {
+        setLoginStatus('手机号格式不正确，请输入 11 位手机号。', 'error');
+        return;
+      }
+      if (!supabaseClient) {
+        setLoginStatus('Supabase 初始化失败，请稍后刷新重试。', 'error');
+        return;
+      }
+
+      setLoginStatus('正在登录...', 'normal');
+
+      try {
+        const payload = {
+          phone,
+          name: name || null,
+          updated_at: new Date().toISOString()
+        };
+        const { error } = await supabaseClient
+          .from('users')
+          .upsert(payload, { onConflict: 'phone' });
+
+        if (error) {
+          console.error('login upsert error:', error);
+          setLoginStatus(`登录失败：${error.message}`, 'error');
+          return;
+        }
+
+        currentUser = { phone, name: name || '' };
+        storeUser(currentUser);
+        setLocked(false);
+        setLoginStatus('登录成功。', 'ok');
+        setAlarmStatus('已登录，可提交提醒。', 'ok');
+        await loadAlarmTasks();
+      } catch (err) {
+        console.error(err);
+        setLoginStatus('登录失败，请稍后再试。', 'error');
+      }
+    }
+
+    function logout(clearLoginInputs = false) {
+      currentUser = null;
+      clearStoredUser();
+      setDateValue(els.alarmDate, '');
+      renderAlarmList([]);
+      setAlarmStatus('请登录后再提交提醒。', 'normal');
+      if (clearLoginInputs) {
+        els.loginName.value = '';
+        els.loginPhone.value = '';
+      }
+      setLocked(true);
+    }
+
+    async function sendEmailViaServer(email, subject, text) {
+      const resp = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, subject, text })
+      });
+      const data = await resp.json();
+      if (!data.ok) {
+        throw new Error(data.message || '邮件发送失败');
+      }
+      return data.result;
+    }
+
+    async function submitAlarm() {
+      if (!currentUser) {
+        setAlarmStatus('请先登录后再提交提醒。', 'error');
+        setLocked(true);
+        return;
+      }
+
+      const email = normalizeEmail(els.alarmEmail.value);
+      const dateStr = els.alarmDate.value;
+
+      if (!email || !dateStr) {
+        setAlarmStatus('请先填写邮箱并选择提醒日期。', 'error');
+        return;
+      }
+      if (!isValidEmail(email)) {
+        setAlarmStatus('邮箱格式不正确，请重新输入。', 'error');
+        return;
+      }
+      if (!supabaseClient) {
+        setAlarmStatus('Supabase 初始化失败，请稍后刷新重试。', 'error');
+        return;
+      }
+
+      const scheduledAt = buildScheduleAt(dateStr);
+      const payload = {
+        phone: currentUser.phone,
+        email,
+        remind_date: dateStr,
+        scheduled_at: scheduledAt,
+        status: 'pending',
+        source: 'web'
+      };
+
+      setAlarmStatus('正在提交提醒...', 'normal');
+
+      try {
+        const { error } = await supabaseClient
+          .from('alarm_requests')
+          .insert(payload);
+
+        if (error) {
+          console.error('Supabase insert error:', error);
+          setAlarmStatus(`提交失败：${error.message}`, 'error');
+          return;
+        }
+
+        setAlarmStatus(`提交成功，${dateStr} 09:00 将发送邮件提醒。`, 'ok');
+        setDateValue(els.alarmDate, dateStr);
+        await loadAlarmTasks();
+      } catch (err) {
+        console.error(err);
+        setAlarmStatus('提交失败，请稍后再试。', 'error');
+      }
     }
 
     function showStatus(text, type = 'normal') {
@@ -890,6 +1569,131 @@
       els.lineBoundary.style.width = `${(boundary / safeTotal) * 100}%`;
     }
 
+    function loadAmountConfig() {
+      try {
+        const raw = localStorage.getItem('amount_config');
+        if (!raw) return { ...DEFAULT_AMOUNT_CONFIG };
+        const parsed = JSON.parse(raw);
+        return {
+          stay: Number(parsed.stay ?? DEFAULT_AMOUNT_CONFIG.stay),
+          meal: Number(parsed.meal ?? DEFAULT_AMOUNT_CONFIG.meal)
+        };
+      } catch {
+        return { ...DEFAULT_AMOUNT_CONFIG };
+      }
+    }
+
+    function saveAmountConfigToStorage(config) {
+      localStorage.setItem('amount_config', JSON.stringify(config));
+    }
+
+    function applyAmountConfigToInputs() {
+      els.stayAllowance.value = String(amountConfig.stay);
+      els.mealAllowance.value = String(amountConfig.meal);
+    }
+
+    function computeAmounts(travelDays, boundaryDays) {
+      const normalTravel = Math.max(travelDays - boundaryDays, 0);
+      const stayTotal = normalTravel * amountConfig.stay;
+      const mealTotal = travelDays * amountConfig.meal;
+      return {
+        stayTotal,
+        mealTotal,
+        total: stayTotal + mealTotal
+      };
+    }
+
+    function setRecordsStatus(text, type = 'normal') {
+      els.recordsStatus.textContent = text;
+      if (type === 'error') {
+        els.recordsStatus.style.color = '#ff9cbc';
+      } else if (type === 'ok') {
+        els.recordsStatus.style.color = '#96ffd0';
+      } else {
+        els.recordsStatus.style.color = 'rgba(151, 189, 223, 0.9)';
+      }
+    }
+
+    function renderRecords(items) {
+      els.recordsList.innerHTML = '';
+      if (!items || !items.length) {
+        const empty = document.createElement('div');
+        empty.className = 'record-empty';
+        empty.textContent = '当前没有已保存的记录。';
+        els.recordsList.appendChild(empty);
+        return;
+      }
+
+      items.forEach((rec) => {
+        const row = document.createElement('div');
+        row.className = 'record-item';
+
+        const meta = document.createElement('div');
+        meta.className = 'record-meta';
+        const title = document.createElement('span');
+        title.textContent = `${rec.start_date} - ${rec.end_date}`;
+        const detail = document.createElement('div');
+        detail.textContent = `可报销 ${rec.travel_days} 天，住宿 ${rec.stay_days} 天`;
+        meta.appendChild(title);
+        meta.appendChild(detail);
+
+        const btn = document.createElement('button');
+        btn.className = 'danger';
+        btn.textContent = '删除';
+        btn.addEventListener('click', () => deleteRecord(rec.id));
+
+        row.appendChild(meta);
+        row.appendChild(btn);
+        els.recordsList.appendChild(row);
+      });
+    }
+
+    async function loadRecords() {
+      if (!currentUser) {
+        showStatus('请先登录后再查看记录。', 'error');
+        setLocked(true);
+        return;
+      }
+      if (!supabaseClient) {
+        setRecordsStatus('Supabase 初始化失败，请稍后刷新重试。', 'error');
+        return;
+      }
+
+      setRecordsStatus('正在加载记录...', 'normal');
+      const { data, error } = await supabaseClient
+        .from('trip_records')
+        .select('id, start_date, end_date, travel_days, stay_days, created_at')
+        .eq('phone', currentUser.phone)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('loadRecords error:', error);
+        setRecordsStatus(`加载失败：${error.message}`, 'error');
+        renderRecords([]);
+        return;
+      }
+      renderRecords(data || []);
+      setRecordsStatus('加载完成。', 'ok');
+      els.recordsOverlay.classList.add('active');
+    }
+
+    async function deleteRecord(recordId) {
+      if (!recordId || !supabaseClient) return;
+      setRecordsStatus('正在删除记录...', 'normal');
+      const { error } = await supabaseClient
+        .from('trip_records')
+        .delete()
+        .eq('id', recordId);
+
+      if (error) {
+        console.error('deleteRecord error:', error);
+        setRecordsStatus(`删除失败：${error.message}`, 'error');
+        return;
+      }
+      setRecordsStatus('已删除记录。', 'ok');
+      await loadRecords();
+    }
+
     function calculate() {
       const s = els.startDate.value;
       const e = els.endDate.value;
@@ -962,7 +1766,11 @@
       els.kpiHome.textContent = String(homeMiddle);
       els.kpiTravel.textContent = String(travel);
       setLine(total, travel - boundary, homeMiddle, boundary);
-      showStatus(`可报销天数 ${travel} 天，住宿天数 ${stay} 天。`, 'ok');
+      const amounts = computeAmounts(travel, boundary);
+      showStatus(
+        `可报销天数 ${travel} 天，住宿天数 ${stay} 天。补助：住宿 ${amounts.stayTotal} 元，饭补 ${amounts.mealTotal} 元，合计 ${amounts.total} 元。`,
+        'ok'
+      );
     }
 
     function resetAll() {
@@ -999,10 +1807,245 @@
       el.addEventListener('change', calculate);
     });
 
-    els.runCalc.addEventListener('click', calculate);
-    els.resetAll.addEventListener('click', resetAll);
+    async function saveToCloud() {
+      if (!currentUser) {
+        showStatus('请先登录后再保存到云。', 'error');
+        setLocked(true);
+        return;
+      }
+
+      const s = els.startDate.value;
+      const e = els.endDate.value;
+      if (!s || !e) {
+        showStatus('请先选择出差开始与结束日期。', 'error');
+        return;
+      }
+      if (s > e) {
+        showStatus('出差开始日期不能晚于结束日期。', 'error');
+        return;
+      }
+
+      const record = {
+        phone: currentUser.phone,
+        start_date: s,
+        end_date: e,
+        home_ranges: homeRanges,
+        total_days: Number(els.kpiTotal.textContent || 0),
+        stay_days: Number(els.kpiStay.textContent || 0),
+        travel_days: Number(els.kpiTravel.textContent || 0),
+        created_at: new Date().toISOString()
+      };
+
+      showStatus('正在保存到云...', 'normal');
+
+      try {
+        const { error } = await supabaseClient
+          .from('trip_records')
+          .insert(record);
+
+        if (error) {
+          console.error('saveToCloud error:', error);
+          showStatus(`保存失败：${error.message}`, 'error');
+          return;
+        }
+        showStatus('已保存到云端。', 'ok');
+      } catch (err) {
+        console.error(err);
+        showStatus('保存失败，请稍后再试。', 'error');
+      }
+    }
+
+    async function loadYearlyStats() {
+      if (!currentUser) {
+        showStatus('请先登录后再查看年度统计。', 'error');
+        setLocked(true);
+        return;
+      }
+      const year = new Date().getFullYear();
+      const start = `${year}-01-01`;
+      const end = `${year}-12-31`;
+
+      showStatus('正在统计年度数据...', 'normal');
+      try {
+        const { data, error } = await supabaseClient
+          .from('trip_records')
+          .select('start_date, end_date, home_ranges, travel_days, stay_days')
+          .eq('phone', currentUser.phone)
+          .gte('start_date', start)
+          .lte('end_date', end);
+
+        if (error) {
+          console.error('yearly stats error:', error);
+          showStatus(`统计失败：${error.message}`, 'error');
+          return;
+        }
+
+        const yearStart = new Date(`${year}-01-01T00:00:00`);
+        const yearEnd = new Date(`${year}-12-31T00:00:00`);
+        const dayStatus = new Map();
+
+        const statusPriority = (s) => {
+          if (s === 'boundary') return 3;
+          if (s === 'home') return 2;
+          if (s === 'travel') return 1;
+          return 0;
+        };
+
+        const setStatus = (dateStr, status) => {
+          const prev = dayStatus.get(dateStr) || 'none';
+          if (statusPriority(status) > statusPriority(prev)) {
+            dayStatus.set(dateStr, status);
+          }
+        };
+
+        (data || []).forEach((rec) => {
+          const sDate = new Date(`${rec.start_date}T00:00:00`);
+          const eDate = new Date(`${rec.end_date}T00:00:00`);
+          const startDate = sDate < yearStart ? yearStart : sDate;
+          const endDate = eDate > yearEnd ? yearEnd : eDate;
+          const ranges = Array.isArray(rec.home_ranges) ? rec.home_ranges : [];
+
+          const inHomeMiddleForRanges = (dateStr) => {
+            return ranges.some(r => dateStr > r.start && dateStr < r.end);
+          };
+          const isBoundaryForRanges = (dateStr) => {
+            return ranges.some(r => dateStr === r.start || dateStr === r.end);
+          };
+
+          const cur = new Date(startDate);
+          while (cur <= endDate) {
+            const ds = fmtDate(cur);
+            if (inHomeMiddleForRanges(ds)) {
+              setStatus(ds, 'home');
+            } else {
+              setStatus(ds, 'travel');
+              if (isBoundaryForRanges(ds)) {
+                setStatus(ds, 'boundary');
+              }
+            }
+            cur.setDate(cur.getDate() + 1);
+          }
+        });
+
+        renderYearlyHeatmap(year, dayStatus);
+        const totals = (data || []).reduce(
+          (acc, item) => {
+            acc.travel += Number(item.travel_days || 0);
+            acc.stay += Number(item.stay_days || 0);
+            return acc;
+          },
+          { travel: 0, stay: 0 }
+        );
+
+        showStatus(`${year} 年可报销天数 ${totals.travel} 天，住宿天数 ${totals.stay} 天。`, 'ok');
+      } catch (err) {
+        console.error(err);
+        showStatus('统计失败，请稍后再试。', 'error');
+      }
+    }
+
+    function renderYearlyHeatmap(year, dayStatus) {
+      lastYearlySnapshot = { year, dayStatus };
+      const start = new Date(`${year}-01-01T00:00:00`);
+      const end = new Date(`${year}-12-31T00:00:00`);
+      const gridStart = new Date(start);
+      gridStart.setDate(start.getDate() - start.getDay());
+      const gridEnd = new Date(end);
+      gridEnd.setDate(end.getDate() + (6 - end.getDay()));
+
+      els.yearlyGrid.innerHTML = '';
+      els.yearlyMonths.innerHTML = '';
+      els.yearlyWeekdays.innerHTML = '';
+
+      const weekdayLabels = ['日', '一', '二', '三', '四', '五', '六'];
+      weekdayLabels.forEach((label) => {
+        const span = document.createElement('span');
+        span.textContent = label;
+        els.yearlyWeekdays.appendChild(span);
+      });
+
+      const totalWeeks = Math.ceil((gridEnd - gridStart + 1) / 86400000 / 7);
+      const monthSpans = Array.from({ length: totalWeeks }, () => '');
+      for (let w = 0; w < totalWeeks; w += 1) {
+        const d = new Date(gridStart);
+        d.setDate(gridStart.getDate() + w * 7);
+        if (d.getDate() <= 7) {
+          monthSpans[w] = `${d.getMonth() + 1}月`;
+        }
+      }
+      monthSpans.forEach((label) => {
+        const span = document.createElement('span');
+        span.textContent = label;
+        els.yearlyMonths.appendChild(span);
+      });
+
+      const cur = new Date(gridStart);
+      while (cur <= gridEnd) {
+        const cell = document.createElement('div');
+        cell.className = 'heatmap-cell';
+        const ds = fmtDate(cur);
+        const status = dayStatus.get(ds);
+        if (status) {
+          cell.classList.add(status);
+        }
+        cell.title = ds;
+        els.yearlyGrid.appendChild(cell);
+        cur.setDate(cur.getDate() + 1);
+      }
+
+      els.yearlyTitle.textContent = `${year} 年度统计`;
+      const travelCount = Array.from(dayStatus.values()).filter(v => v === 'travel' || v === 'boundary').length;
+      const boundaryCount = Array.from(dayStatus.values()).filter(v => v === 'boundary').length;
+      const homeCount = Array.from(dayStatus.values()).filter(v => v === 'home').length;
+      const amounts = computeAmounts(travelCount, boundaryCount);
+      els.yearlySummary.textContent =
+        `已标记 ${travelCount + homeCount} 天（出差/边界 ${travelCount} 天，在家中间 ${homeCount} 天）。` +
+        `补助：住宿 ${amounts.stayTotal} 元，饭补 ${amounts.mealTotal} 元，合计 ${amounts.total} 元。`;
+      els.yearlyOverlay.classList.add('active');
+    }
+
+    els.saveCloud.addEventListener('click', saveToCloud);
+    els.manageRecords.addEventListener('click', loadRecords);
+    els.yearlyStats.addEventListener('click', loadYearlyStats);
     els.presetPrevMonth.addEventListener('click', () => applyPreviousMonthsAccumulated(1));
     els.presetPrev2Month.addEventListener('click', () => applyPreviousMonthsAccumulated(2));
+    els.submitAlarm.addEventListener('click', submitAlarm);
+    els.loginSubmit.addEventListener('click', loginOrRegister);
+    els.switchAccount.addEventListener('click', () => logout(true));
+    els.closeYearly.addEventListener('click', () => els.yearlyOverlay.classList.remove('active'));
+    els.yearlyOverlay.addEventListener('click', (e) => {
+      if (e.target === els.yearlyOverlay) {
+        els.yearlyOverlay.classList.remove('active');
+      }
+    });
+    els.closeRecords.addEventListener('click', () => els.recordsOverlay.classList.remove('active'));
+    els.recordsOverlay.addEventListener('click', (e) => {
+      if (e.target === els.recordsOverlay) {
+        els.recordsOverlay.classList.remove('active');
+      }
+    });
+    els.openAmountConfig.addEventListener('click', () => {
+      els.amountConfig.classList.toggle('active');
+    });
+    els.saveAmountConfig.addEventListener('click', () => {
+      const stay = Number(els.stayAllowance.value || 0);
+      const meal = Number(els.mealAllowance.value || 0);
+      amountConfig = {
+        stay: Math.max(stay, 0),
+        meal: Math.max(meal, 0)
+      };
+      saveAmountConfigToStorage(amountConfig);
+      els.amountConfig.classList.remove('active');
+      if (els.startDate.value && els.endDate.value) {
+        calculate();
+        showStatus('金额配置已保存并已重新计算。', 'ok');
+      } else {
+        showStatus('金额配置已保存。', 'ok');
+      }
+      if (els.yearlyOverlay.classList.contains('active') && lastYearlySnapshot) {
+        renderYearlyHeatmap(lastYearlySnapshot.year, lastYearlySnapshot.dayStatus);
+      }
+    });
 
     window.addEventListener('keydown', (e) => {
       if (e.ctrlKey && e.key === 'Enter') {
@@ -1017,7 +2060,18 @@
     setInterval(updateClock, 1000);
     initDatePickers();
     renderHomeRanges();
+    amountConfig = loadAmountConfig();
+    applyAmountConfigToInputs();
     applyCurrentMonth();
+
+    const storedUser = loadStoredUser();
+    if (storedUser && storedUser.phone) {
+      currentUser = storedUser;
+      setLocked(false);
+      loadAlarmTasks();
+    } else {
+      setLocked(true);
+    }
   </script>
 </body>
 </html>
