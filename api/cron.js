@@ -19,13 +19,15 @@ export default async function handler(req, res) {
   try {
     const timeZone = getOptionalEnv('CRON_TIMEZONE', 'Asia/Shanghai');
     const today = getTodayInTz(timeZone);
+    const nowIso = new Date().toISOString();
     const supabase = getSupabase();
 
     const { data, error } = await supabase
       .from('alarm_requests')
       .select('id, email, remind_date, status')
       .eq('status', 'pending')
-      .eq('remind_date', today);
+      .eq('remind_date', today)
+      .lte('scheduled_at', nowIso);
 
     if (error) {
       console.error('Cron load error:', error);

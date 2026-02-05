@@ -1047,6 +1047,7 @@
           <div class="alarm-hint">提醒固定在早上 09:00 发送邮件。</div>
           <div class="actions">
             <button id="submitAlarm">提交提醒</button>
+            <button class="secondary" id="testAlarm">测试提醒（2分钟后）</button>
           </div>
           <div class="alarm-status" id="alarmStatus">等待填写手机号和日期。</div>
           <div class="alarm-list" id="alarmList"></div>
@@ -1136,6 +1137,7 @@
       alarmEmail: document.getElementById('alarmEmail'),
       alarmDate: document.getElementById('alarmDate'),
       submitAlarm: document.getElementById('submitAlarm'),
+      testAlarm: document.getElementById('testAlarm'),
       alarmStatus: document.getElementById('alarmStatus'),
       alarmList: document.getElementById('alarmList'),
       switchAccount: document.getElementById('switchAccount'),
@@ -1291,6 +1293,12 @@
       return `${dateStr}T09:00:00`;
     }
 
+    function addMinutes(dateObj, minutes) {
+      const next = new Date(dateObj);
+      next.setMinutes(next.getMinutes() + minutes);
+      return next;
+    }
+
     function setLocked(locked) {
       document.body.classList.toggle('locked', locked);
       els.loginOverlay.classList.toggle('active', locked);
@@ -1412,6 +1420,15 @@
       setLocked(true);
     }
 
+    function requireLogin(message = '请先登录后再继续。') {
+      if (currentUser) {
+        return true;
+      }
+      setAlarmStatus(message, 'error');
+      setLocked(true);
+      return false;
+    }
+
     async function sendEmailViaServer(email, subject, text) {
       const resp = await fetch('/api/send-email', {
         method: 'POST',
@@ -1426,9 +1443,7 @@
     }
 
     async function submitAlarm() {
-      if (!currentUser) {
-        setAlarmStatus('请先登录后再提交提醒。', 'error');
-        setLocked(true);
+      if (!requireLogin('请先登录后再提交提醒。')) {
         return;
       }
 
@@ -1477,6 +1492,74 @@
       } catch (err) {
         console.error(err);
         setAlarmStatus('提交失败，请稍后再试。', 'error');
+      }
+    }
+
+    async function createTestAlarm() {
+      if (!requireLogin('请先登录后再测试提醒。')) {
+        return;
+      }
+
+      const email = normalizeEmail(els.alarmEmail.value);
+      if (!email) {
+        setAlarmStatus('请先填写邮箱。', 'error');
+        return;
+      }
+      if (!isValidEmail(email)) {
+        setAlarmStatus('邮箱格式不正确，请重新输入。', 'error');
+        return;
+      }
+      if (!supabaseClient) {
+        setAlarmStatus('Supabase 初始化失败，请稍后刷新重试。', 'error');
+        return;
+      }
+
+      const now = new Date();
+      const remindDate = fmtDate(now);
+      const scheduledAt = addMinutes(now, 2).toISOString();
+
+      const payload = {
+        phone: currentUser.phone,
+        email,
+        remind_date: remindDate,
+        scheduled_at: scheduledAt,
+        status: 'pending',
+        source: 'test'
+      };
+
+      setAlarmStatus('正在创建 2 分钟后的测试提醒...', 'normal');
+
+      try {
+        const { error } = await supabaseClient
+          .from('alarm_requests')
+          .insert(payload);
+
+        if (error) {
+          console.error('Supabase insert error:', error);
+          setAlarmStatus(`创建失败：${error.message}`, 'error');
+          return;
+        }
+
+        setAlarmStatus('已创建测试提醒，2 分钟后将尝试发送邮件。', 'ok');
+        await loadAlarmTasks();
+
+        setTimeout(async () => {
+          try {
+            const resp = await fetch('/api/cron');
+            if (!resp.ok) {
+              setAlarmStatus('测试提醒已创建，但触发发送失败，请检查 /api/cron 权限。', 'error');
+              return;
+            }
+            setAlarmStatus('已触发测试发送，请查收邮件。', 'ok');
+            await loadAlarmTasks();
+          } catch (err) {
+            console.error(err);
+            setAlarmStatus('测试触发失败，请稍后再试。', 'error');
+          }
+        }, 125000);
+      } catch (err) {
+        console.error(err);
+        setAlarmStatus('创建失败，请稍后再试。', 'error');
       }
     }
 
@@ -2012,6 +2095,7 @@
     els.presetPrevMonth.addEventListener('click', () => applyPreviousMonthsAccumulated(1));
     els.presetPrev2Month.addEventListener('click', () => applyPreviousMonthsAccumulated(2));
     els.submitAlarm.addEventListener('click', submitAlarm);
+    els.testAlarm.addEventListener('click', createTestAlarm);
     els.loginSubmit.addEventListener('click', loginOrRegister);
     els.switchAccount.addEventListener('click', () => logout(true));
     els.closeYearly.addEventListener('click', () => els.yearlyOverlay.classList.remove('active'));
@@ -2073,6 +2157,7 @@
       loadAlarmTasks();
     } else {
       setLocked(true);
+      setAlarmStatus('请先登录后再继续。', 'normal');
     }
   </script>
 </body>
