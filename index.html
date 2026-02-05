@@ -1280,6 +1280,11 @@
       return raw.replace(/\s+/g, '').replace(/-/g, '');
     }
 
+    function isValidPhone(raw) {
+      const cleaned = normalizePhone(raw);
+      return /^1\d{10}$/.test(cleaned);
+    }
+
     function normalizeEmail(raw) {
       return (raw || '').trim().toLowerCase();
     }
