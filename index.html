@@ -133,6 +133,63 @@
       background: rgba(8, 25, 47, 0.42);
     }
 
+    .user-phone {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      padding: 10px 16px;
+      border-radius: 999px;
+      color: #e9fbff;
+      background: linear-gradient(120deg, rgba(0, 255, 209, 0.5), rgba(0, 148, 255, 0.6), rgba(255, 74, 180, 0.7), rgba(255, 198, 94, 0.55));
+      background-size: 200% 200%;
+      animation: phoneGlow 2.6s ease-in-out infinite, phoneFlow 5.5s linear infinite;
+      border: 1px solid rgba(120, 255, 246, 0.7);
+      box-shadow: 0 0 22px rgba(80, 247, 255, 0.45), 0 0 40px rgba(255, 74, 180, 0.45);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 160px;
+      text-align: center;
+    }
+
+    .user-phone::after {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: radial-gradient(circle, rgba(80, 247, 255, 0.25), transparent 60%);
+      animation: phoneGlow 2.6s ease-in-out infinite;
+    }
+
+    .user-phone::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.28) 45%, transparent 70%);
+      transform: translateX(-120%);
+      animation: phoneSweep 3.8s ease-in-out infinite;
+      mix-blend-mode: screen;
+    }
+
+    @keyframes phoneGlow {
+      0%, 100% { transform: scale(0.985); opacity: 0.6; }
+      50% { transform: scale(1.01); opacity: 0.82; }
+    }
+
+    @keyframes phoneFlow {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes phoneSweep {
+      0% { transform: translateX(-120%); opacity: 0; }
+      30% { opacity: 0.4; }
+      60% { transform: translateX(120%); opacity: 0; }
+      100% { transform: translateX(120%); opacity: 0; }
+    }
+
     .layout {
       display: grid;
       gap: 16px;
@@ -274,6 +331,11 @@
       flex-wrap: wrap;
       gap: 10px;
       margin-top: 10px;
+    }
+
+    .topbar .actions {
+      align-items: center;
+      margin-top: 0;
     }
 
     .date-stack {
@@ -925,11 +987,7 @@
   <div class="login-overlay" id="loginOverlay">
     <div class="login-card">
       <h2>登录 / 注册</h2>
-      <p>请输入用户名和手机号，登录后可操作页面。</p>
-      <div class="field">
-        <label for="loginName">用户名</label>
-        <input type="text" id="loginName" class="date-input" placeholder="请输入用户名" />
-      </div>
+      <p>请输入手机号，登录后可操作页面。</p>
       <div class="field">
         <label for="loginPhone">手机号</label>
         <input type="tel" id="loginPhone" class="date-input" placeholder="请输入手机号" />
@@ -1000,6 +1058,7 @@
         </div>
       </div>
       <div class="actions">
+        <span class="user-phone" id="userPhoneDisplay">未登录</span>
         <button class="secondary" id="switchAccount">切换账号</button>
         <div class="clock" id="clock">SYS TIME --:--:--</div>
       </div>
@@ -1047,7 +1106,6 @@
           <div class="alarm-hint">提醒固定在早上 09:00 发送邮件。</div>
           <div class="actions">
             <button id="submitAlarm">提交提醒</button>
-            <button class="secondary" id="testAlarm">测试提醒（2分钟后）</button>
           </div>
           <div class="alarm-status" id="alarmStatus">等待填写手机号和日期。</div>
           <div class="alarm-list" id="alarmList"></div>
@@ -1137,15 +1195,14 @@
       alarmEmail: document.getElementById('alarmEmail'),
       alarmDate: document.getElementById('alarmDate'),
       submitAlarm: document.getElementById('submitAlarm'),
-      testAlarm: document.getElementById('testAlarm'),
       alarmStatus: document.getElementById('alarmStatus'),
       alarmList: document.getElementById('alarmList'),
       switchAccount: document.getElementById('switchAccount'),
       loginOverlay: document.getElementById('loginOverlay'),
-      loginName: document.getElementById('loginName'),
       loginPhone: document.getElementById('loginPhone'),
       loginSubmit: document.getElementById('loginSubmit'),
       loginStatus: document.getElementById('loginStatus'),
+      userPhoneDisplay: document.getElementById('userPhoneDisplay'),
       yearlyOverlay: document.getElementById('yearlyOverlay'),
       closeYearly: document.getElementById('closeYearly'),
       yearlyGrid: document.getElementById('yearlyGrid'),
@@ -1298,11 +1355,6 @@
       return `${dateStr}T09:00:00`;
     }
 
-    function addMinutes(dateObj, minutes) {
-      const next = new Date(dateObj);
-      next.setMinutes(next.getMinutes() + minutes);
-      return next;
-    }
 
     function setLocked(locked) {
       document.body.classList.toggle('locked', locked);
@@ -1366,7 +1418,6 @@
     }
 
     async function loginOrRegister() {
-      const name = (els.loginName.value || '').trim();
       const phone = normalizePhone(els.loginPhone.value);
 
       if (!phone) {
@@ -1387,7 +1438,6 @@
       try {
         const payload = {
           phone,
-          name: name || null,
           updated_at: new Date().toISOString()
         };
         const { error } = await supabaseClient
@@ -1400,11 +1450,12 @@
           return;
         }
 
-        currentUser = { phone, name: name || '' };
+        currentUser = { phone };
         storeUser(currentUser);
         setLocked(false);
         setLoginStatus('登录成功。', 'ok');
         setAlarmStatus('已登录，可提交提醒。', 'ok');
+        els.userPhoneDisplay.textContent = phone;
         await loadAlarmTasks();
       } catch (err) {
         console.error(err);
@@ -1419,9 +1470,9 @@
       renderAlarmList([]);
       setAlarmStatus('请登录后再提交提醒。', 'normal');
       if (clearLoginInputs) {
-        els.loginName.value = '';
         els.loginPhone.value = '';
       }
+      els.userPhoneDisplay.textContent = '未登录';
       setLocked(true);
     }
 
@@ -1500,73 +1551,6 @@
       }
     }
 
-    async function createTestAlarm() {
-      if (!requireLogin('请先登录后再测试提醒。')) {
-        return;
-      }
-
-      const email = normalizeEmail(els.alarmEmail.value);
-      if (!email) {
-        setAlarmStatus('请先填写邮箱。', 'error');
-        return;
-      }
-      if (!isValidEmail(email)) {
-        setAlarmStatus('邮箱格式不正确，请重新输入。', 'error');
-        return;
-      }
-      if (!supabaseClient) {
-        setAlarmStatus('Supabase 初始化失败，请稍后刷新重试。', 'error');
-        return;
-      }
-
-      const now = new Date();
-      const remindDate = fmtDate(now);
-      const scheduledAt = addMinutes(now, 2).toISOString();
-
-      const payload = {
-        phone: currentUser.phone,
-        email,
-        remind_date: remindDate,
-        scheduled_at: scheduledAt,
-        status: 'pending',
-        source: 'test'
-      };
-
-      setAlarmStatus('正在创建 2 分钟后的测试提醒...', 'normal');
-
-      try {
-        const { error } = await supabaseClient
-          .from('alarm_requests')
-          .insert(payload);
-
-        if (error) {
-          console.error('Supabase insert error:', error);
-          setAlarmStatus(`创建失败：${error.message}`, 'error');
-          return;
-        }
-
-        setAlarmStatus('已创建测试提醒，2 分钟后将尝试发送邮件。', 'ok');
-        await loadAlarmTasks();
-
-        setTimeout(async () => {
-          try {
-            const resp = await fetch('/api/cron');
-            if (!resp.ok) {
-              setAlarmStatus('测试提醒已创建，但触发发送失败，请检查 /api/cron 权限。', 'error');
-              return;
-            }
-            setAlarmStatus('已触发测试发送，请查收邮件。', 'ok');
-            await loadAlarmTasks();
-          } catch (err) {
-            console.error(err);
-            setAlarmStatus('测试触发失败，请稍后再试。', 'error');
-          }
-        }, 125000);
-      } catch (err) {
-        console.error(err);
-        setAlarmStatus('创建失败，请稍后再试。', 'error');
-      }
-    }
 
     function showStatus(text, type = 'normal') {
       els.status.textContent = text;
@@ -2100,7 +2084,6 @@
     els.presetPrevMonth.addEventListener('click', () => applyPreviousMonthsAccumulated(1));
     els.presetPrev2Month.addEventListener('click', () => applyPreviousMonthsAccumulated(2));
     els.submitAlarm.addEventListener('click', submitAlarm);
-    els.testAlarm.addEventListener('click', createTestAlarm);
     els.loginSubmit.addEventListener('click', loginOrRegister);
     els.switchAccount.addEventListener('click', () => logout(true));
     els.closeYearly.addEventListener('click', () => els.yearlyOverlay.classList.remove('active'));
@@ -2160,9 +2143,11 @@
       currentUser = storedUser;
       setLocked(false);
       loadAlarmTasks();
+      els.userPhoneDisplay.textContent = storedUser.phone;
     } else {
       setLocked(true);
       setAlarmStatus('请先登录后再继续。', 'normal');
+      els.userPhoneDisplay.textContent = '未登录';
     }
   </script>
 </body>
