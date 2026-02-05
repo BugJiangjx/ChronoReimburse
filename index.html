@@ -1164,6 +1164,8 @@
 
     const homeRanges = [];
     const datePickers = {};
+    const DEFAULT_AMOUNT_CONFIG = { stay: 200, meal: 80 };
+    let amountConfig = { ...DEFAULT_AMOUNT_CONFIG };
     let lastYearlySnapshot = null;
 
     const parseDate = (dateStr) => {
