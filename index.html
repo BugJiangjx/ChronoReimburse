@@ -1059,7 +1059,7 @@
       </div>
       <div class="actions">
         <span class="user-phone" id="userPhoneDisplay">未登录</span>
-        <button class="secondary" id="switchAccount">切换账号</button>
+        <button class="secondary" id="switchAccount">重置访客</button>
         <div class="clock" id="clock">SYS TIME --:--:--</div>
       </div>
     </header>
@@ -1224,8 +1224,10 @@
     const homeRanges = [];
     const datePickers = {};
     const DEFAULT_AMOUNT_CONFIG = { stay: 200, meal: 80 };
+    const GUEST_USER_KEY = 'alarm_user';
     let amountConfig = { ...DEFAULT_AMOUNT_CONFIG };
     let lastYearlySnapshot = null;
+    let currentUser = null;
 
     const parseDate = (dateStr) => {
       if (!dateStr) return null;
@@ -1363,7 +1365,7 @@
 
     function loadStoredUser() {
       try {
-        const raw = localStorage.getItem('alarm_user');
+        const raw = localStorage.getItem(GUEST_USER_KEY);
         if (!raw) return null;
         return JSON.parse(raw);
       } catch {
@@ -1372,11 +1374,28 @@
     }
 
     function storeUser(user) {
-      localStorage.setItem('alarm_user', JSON.stringify(user));
+      localStorage.setItem(GUEST_USER_KEY, JSON.stringify(user));
     }
 
     function clearStoredUser() {
-      localStorage.removeItem('alarm_user');
+      localStorage.removeItem(GUEST_USER_KEY);
+    }
+
+    function createGuestUser() {
+      const suffix = String(Date.now()).slice(-10).padStart(10, '0');
+      return { phone: `1${suffix}` };
+    }
+
+    function ensureGuestUser() {
+      const storedUser = loadStoredUser();
+      currentUser = storedUser && storedUser.phone ? storedUser : createGuestUser();
+      storeUser(currentUser);
+      setLocked(false);
+      els.userPhoneDisplay.textContent = '免登录模式';
+      els.switchAccount.textContent = '重置访客';
+      setLoginStatus('已关闭登录限制，当前为免登录模式。', 'ok');
+      setAlarmStatus('免登录模式已启用，可直接提交提醒。', 'ok');
+      return currentUser;
     }
 
     function renderAlarmList(items) {
@@ -1464,25 +1483,25 @@
     }
 
     function logout(clearLoginInputs = false) {
-      currentUser = null;
       clearStoredUser();
+      currentUser = createGuestUser();
+      storeUser(currentUser);
       setDateValue(els.alarmDate, '');
       renderAlarmList([]);
-      setAlarmStatus('请登录后再提交提醒。', 'normal');
+      setAlarmStatus('已切换为新的免登录访客。', 'ok');
       if (clearLoginInputs) {
         els.loginPhone.value = '';
       }
-      els.userPhoneDisplay.textContent = '未登录';
-      setLocked(true);
+      els.userPhoneDisplay.textContent = '免登录模式';
+      els.switchAccount.textContent = '重置访客';
+      setLocked(false);
     }
 
     function requireLogin(message = '请先登录后再继续。') {
-      if (currentUser) {
-        return true;
+      if (!currentUser) {
+        ensureGuestUser();
       }
-      setAlarmStatus(message, 'error');
-      setLocked(true);
-      return false;
+      return true;
     }
 
     async function sendEmailViaServer(email, subject, text) {
@@ -2138,17 +2157,8 @@
     applyAmountConfigToInputs();
     applyCurrentMonth();
 
-    const storedUser = loadStoredUser();
-    if (storedUser && storedUser.phone) {
-      currentUser = storedUser;
-      setLocked(false);
-      loadAlarmTasks();
-      els.userPhoneDisplay.textContent = storedUser.phone;
-    } else {
-      setLocked(true);
-      setAlarmStatus('请先登录后再继续。', 'normal');
-      els.userPhoneDisplay.textContent = '未登录';
-    }
+    ensureGuestUser();
+    loadAlarmTasks();
   </script>
 </body>
 </html>
